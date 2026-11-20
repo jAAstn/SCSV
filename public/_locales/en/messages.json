@@ -119,6 +119,42 @@
   "content_calc_size": {
     "message": "Calculate Size"
   },
+  "content_sort_large": {
+    "message": "Sort: Large → Small"
+  },
+  "content_sort_small": {
+    "message": "Sort: Small → Large"
+  },
+  "content_sort_hint": {
+    "message": "Calculate the size first, then sort by file size"
+  },
+  "content_sort_default": {
+    "message": "Sort: Default"
+  },
+  "content_sort_click": {
+    "message": "Click to change the sorting order"
+  },
+  "content_copied": {
+    "message": "Copied"
+  },
+  "content_cached_hint": {
+    "message": "From cache – click to refresh"
+  },
+  "content_refresh_hint": {
+    "message": "Click to refresh"
+  },
+  "content_duplicates": {
+    "message": "duplicates"
+  },
+  "content_missing_sizes": {
+    "message": "without size"
+  },
+  "content_missing_sizes_hint": {
+    "message": "Private, deleted or API errors – the total only includes available items."
+  },
+  "content_workshop_items": {
+    "message": "Workshop Items"
+  },
   "content_like_all": {
     "message": "Like All"
   },
@@ -139,5 +175,17 @@
   },
   "content_in_collections": {
     "message": "In Collections:"
+  },
+  "popup_overview_title": {
+    "message": "Collections"
+  },
+  "popup_overview_empty": {
+    "message": "No size data yet – sync the cache."
+  },
+  "popup_largest_title": {
+    "message": "Largest items"
+  },
+  "popup_unknown_size": {
+    "message": "Unknown"
   }
 }

@@ -1,0 +1,1 @@
+!function(){"use strict";const n=performance.now();(async()=>{var e=(await import(chrome.runtime.getURL("assets/index.ts-BZbTnqd5.js")))["onExecute"];e?.({perf:{injectTime:n,loadTime:performance.now()-n}})})().catch(console.error)}();

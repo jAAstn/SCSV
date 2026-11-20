@@ -102,6 +102,54 @@
         <span v-else>{{ t('popup_clear_btn') }}</span>
       </button>
 
+      <div v-if="collections.length > 0" class="w-full animate-fade-in">
+        <h2 class="text-xs font-semibold text-steam-light-green mb-1 text-left">
+          {{ t('popup_overview_title') }}
+        </h2>
+        <div class="scsv-overview-list custom-scrollbar">
+          <a
+            v-for="collection in collections"
+            :key="collection.id"
+            :href="`https://steamcommunity.com/sharedfiles/filedetails/?id=${collection.id}`"
+            target="_blank"
+            class="scsv-overview-row"
+          >
+            <span class="scsv-overview-name">{{ collection.title }}</span>
+            <span class="scsv-overview-size">
+              {{ collectionSize(collection) }}
+              <span
+                v-if="collection.knownCount < collection.count"
+                class="scsv-overview-partial"
+                :title="`${collection.knownCount}/${collection.count}`"
+              >*</span>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <p v-else-if="overviewLoaded" class="text-xs text-steam-blue text-center">
+        {{ t('popup_overview_empty') }}
+      </p>
+
+      <div v-if="largestItems.length > 0" class="w-full animate-fade-in">
+        <h2 class="text-xs font-semibold text-steam-light-green mb-1 text-left">
+          {{ t('popup_largest_title') }}
+          <span class="font-normal text-steam-blue">· {{ lastCollectionTitle }}</span>
+        </h2>
+        <ul class="scsv-overview-list custom-scrollbar">
+          <li v-for="item in largestItems" :key="item.id" class="scsv-overview-row">
+            <a
+              :href="`https://steamcommunity.com/sharedfiles/filedetails/?id=${item.id}`"
+              target="_blank"
+              class="scsv-overview-name"
+            >
+              {{ item.title }}
+            </a>
+            <span class="scsv-overview-size">{{ item.size }}</span>
+          </li>
+        </ul>
+      </div>
+
       <div v-if="statusMessage" class="animate-fade-in text-center">
         <p class="text-xs" :class="statusMessageClass">
           {{ statusMessage }}
@@ -109,14 +157,7 @@
       </div>
 
       <div class="text-xs text-center opacity-70">
-        <a 
-          href="https://github.com/PoDiax/SCSV" 
-          target="_blank" 
-          class="text-steam-light-blue hover:text-steam-light-green transition-colors hover:underline"
-          title="View Source on GitHub / Report Issues"
-        >
-          v{{ version }}
-        </a>
+        <span class="text-steam-light-blue">v{{ version }}</span>
       </div>
     </div>
   </div>
@@ -125,8 +166,12 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue'
 import browser from 'webextension-polyfill'
-import { version } from '~/package.json'
 import { CollectionService } from '~/src/shared/CollectionService'
+import { SizeCache } from '~/src/shared/SizeCache'
+import { CollectionIndexCache } from '~/src/shared/CollectionIndexCache'
+import { FileFormatter } from '~/src/utils/formatter'
+
+const version = browser.runtime.getManifest().version
 
 const t = (key: string, substitutions?: string | string[]) => {
   return browser.i18n.getMessage(key, substitutions) || key
@@ -144,6 +189,25 @@ const showDebug = ref(false)
 const debugCacheContent = ref('')
 const statusMessage = ref('')
 const statusType = ref<'success' | 'error' | 'info'>('info')
+
+interface CollectionSummary {
+  id: string
+  title: string
+  count: number
+  totalBytes: number
+  knownCount: number
+}
+
+interface LargestItem {
+  id: string
+  title: string
+  size: string
+}
+
+const collections = ref<CollectionSummary[]>([])
+const largestItems = ref<LargestItem[]>([])
+const lastCollectionTitle = ref('')
+const overviewLoaded = ref(false)
 
 const statusMessageClass = computed(() => {
   switch (statusType.value) {
@@ -199,6 +263,81 @@ const loadCacheStats = async () => {
   } catch (error) {
     console.error('Failed to load cache stats:', error)
   }
+}
+
+const loadOverview = async () => {
+  try {
+    const user = await CollectionService.getCurrentUser()
+    if (!user) {
+      collections.value = []
+      largestItems.value = []
+      overviewLoaded.value = true
+      return
+    }
+
+    const [index, sizes, stored] = await Promise.all([
+      CollectionIndexCache.load(user.steamId),
+      SizeCache.getAll(),
+      browser.storage.local.get('scsv_last_collection'),
+    ])
+
+    collections.value = index
+      .map(collection => {
+        let totalBytes = 0
+        let knownCount = 0
+
+        collection.itemIds.forEach(itemId => {
+          const entry = sizes[itemId]
+          if (entry && typeof entry.b === 'number') {
+            totalBytes += entry.b
+            knownCount++
+          }
+        })
+
+        return {
+          id: collection.id,
+          title: collection.title,
+          count: collection.count,
+          totalBytes,
+          knownCount,
+        }
+      })
+      .sort((a, b) => b.totalBytes - a.totalBytes)
+
+    const last = stored['scsv_last_collection'] as
+      | { title?: string; itemIds?: string[] }
+      | undefined
+
+    if (last?.itemIds?.length) {
+      lastCollectionTitle.value = last.title || ''
+      largestItems.value = last.itemIds
+        .map(itemId => ({
+          id: itemId,
+          title: sizes[itemId]?.n || itemId,
+          bytes: sizes[itemId]?.b ?? 0,
+        }))
+        .filter(item => item.bytes > 0)
+        .sort((a, b) => b.bytes - a.bytes)
+        .slice(0, 5)
+        .map(item => ({
+          id: item.id,
+          title: item.title,
+          size: FileFormatter.formatSteamSize(item.bytes),
+        }))
+    } else {
+      largestItems.value = []
+      lastCollectionTitle.value = ''
+    }
+  } catch (error) {
+    console.error('Failed to load overview:', error)
+  } finally {
+    overviewLoaded.value = true
+  }
+}
+
+const collectionSize = (collection: CollectionSummary): string => {
+  if (collection.knownCount === 0) return t('popup_unknown_size')
+  return FileFormatter.formatSteamSize(collection.totalBytes)
 }
 
 const onUnitToggle = async () => {
@@ -294,6 +433,8 @@ const syncCollections = async () => {
     
     const cacheKeyToSave = `scsv_collection_cache_${currentSteamId.value}`
     await browser.storage.local.set({ [cacheKeyToSave]: cache })
+    await CollectionIndexCache.save(user.steamId, collections)
+    await loadOverview()
     await loadCacheStats()
     
     showMessage(t('msg_sync_complete'), 'success')
@@ -308,6 +449,7 @@ const syncCollections = async () => {
 onMounted(() => {
   loadSettings()
   loadCacheStats()
+  loadOverview()
 })
 </script>
 
@@ -315,6 +457,56 @@ onMounted(() => {
 .popup-container {
   min-height: 240px;
   max-height: 600px;
+  overflow-y: auto;
+}
+
+.scsv-overview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  max-height: 132px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.scsv-overview-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.scsv-overview-row:hover {
+  background: rgba(102, 192, 244, 0.12);
+}
+
+.scsv-overview-name {
+  color: #c7d5e0;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.scsv-overview-name:hover {
+  color: #66c0f4;
+  text-decoration: underline;
+}
+
+.scsv-overview-size {
+  color: #b8f26d;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.scsv-overview-partial {
+  color: #8ba6b6;
 }
 
 .toggle-background {
