@@ -119,6 +119,42 @@
   "content_calc_size": {
     "message": "Größe berechnen"
   },
+  "content_sort_large": {
+    "message": "Sortieren: Groß → Klein"
+  },
+  "content_sort_small": {
+    "message": "Sortieren: Klein → Groß"
+  },
+  "content_sort_hint": {
+    "message": "Berechne zuerst die Größe, dann nach Dateigröße sortieren"
+  },
+  "content_sort_default": {
+    "message": "Sortieren: Standard"
+  },
+  "content_sort_click": {
+    "message": "Klicken, um die Sortierung zu ändern"
+  },
+  "content_copied": {
+    "message": "Kopiert"
+  },
+  "content_cached_hint": {
+    "message": "Aus dem Cache – klicken zum Aktualisieren"
+  },
+  "content_refresh_hint": {
+    "message": "Klicken zum Aktualisieren"
+  },
+  "content_duplicates": {
+    "message": "Duplikate"
+  },
+  "content_missing_sizes": {
+    "message": "ohne Größe"
+  },
+  "content_missing_sizes_hint": {
+    "message": "Privat, gelöscht oder API-Fehler – die Summe enthält nur verfügbare Objekte."
+  },
+  "content_workshop_items": {
+    "message": "Workshop-Items"
+  },
   "content_like_all": {
     "message": "Alle liken"
   },
@@ -139,5 +175,17 @@
   },
   "content_in_collections": {
     "message": "In Kollektionen:"
+  },
+  "popup_overview_title": {
+    "message": "Kollektionen"
+  },
+  "popup_overview_empty": {
+    "message": "Noch keine Größen-Daten – Cache synchronisieren."
+  },
+  "popup_largest_title": {
+    "message": "Größte Items"
+  },
+  "popup_unknown_size": {
+    "message": "Unbekannt"
   }
 }

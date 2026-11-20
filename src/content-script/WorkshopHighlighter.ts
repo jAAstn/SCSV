@@ -122,7 +122,7 @@ export class WorkshopHighlighter {
         badge.appendChild(strong)
         badge.appendChild(document.createElement('br'))
         
-        collections.forEach((c: any, index: number) => {
+        collections.forEach((c: any) => {
           if (typeof c === 'string') {
             badge.appendChild(document.createTextNode(c))
           } else {

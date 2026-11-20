@@ -9,6 +9,20 @@ export class FileFormatter {
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`
   }
 
+  /** Formats bytes the way Steam shows file sizes on item pages (decimal units). */
+  static formatSteamSize(bytes: number): string {
+    if (bytes < 1000) return `${bytes} B`
+    if (bytes < 1000 * 1000) return `${(bytes / 1000).toFixed(2)} KB`
+    if (bytes < 1000 * 1000 * 1000) return `${(bytes / (1000 * 1000)).toFixed(3)} MB`
+    return `${(bytes / (1000 * 1000 * 1000)).toFixed(3)} GB`
+  }
+
+  static formatSteamSizeWithUnit(bytes: number, useGB: boolean): string {
+    return useGB
+      ? `${(bytes / (1000 * 1000 * 1000)).toFixed(2)} GB`
+      : `${(bytes / (1000 * 1000)).toFixed(2)} MB`
+  }
+
   static formatSizeWithUnit(bytes: number, useGB: boolean): string {
     if (bytes === 0) return '0 B'
     

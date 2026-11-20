@@ -30,6 +30,8 @@ export default {
       matches: [
         "https://steamcommunity.com/sharedfiles/filedetails/*",
         "https://steamcommunity.com/workshop/filedetails/*",
+        "https://steamcommunity.com/id/*/myworkshopfiles*",
+        "https://steamcommunity.com/profiles/*/myworkshopfiles*",
       ],
       js: ["src/content-script/index.ts"],
     },

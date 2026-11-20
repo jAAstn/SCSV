@@ -1,0 +1,211 @@
+/* ===== Steam Collection Size Viewer — Panel (Content Script) ===== */
+
+#bulk-tool-panel {
+  height: auto;
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 9999;
+  width: 240px;
+  background: rgba(27, 40, 56, 0.92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(103, 193, 245, 0.18);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  color: #c7d5e0;
+  font: 13px/1.5 "Motiva Sans", -apple-system, BlinkMacSystemFont, "Segoe UI",
+    Arial, sans-serif;
+  overflow: hidden;
+  user-select: none;
+}
+
+#bulk-tool-panel .bulk-tool-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 14px;
+  background: linear-gradient(
+    180deg,
+    rgba(42, 71, 92, 0.85) 0%,
+    rgba(33, 56, 73, 0.7) 100%
+  );
+  border-bottom: 1px solid rgba(103, 193, 245, 0.15);
+  cursor: grab;
+  color: #67c1f5;
+  font-weight: 700;
+  letter-spacing: normal;
+  font-size: 13.6px;
+}
+
+#bulk-tool-panel .bulk-tool-title:active {
+  cursor: grabbing;
+}
+
+#bulk-tool-panel .bulk-tool-minimize {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-left: 8px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  color: #c7d5e0;
+  font-size: 18px;
+  line-height: 1;
+}
+
+#bulk-tool-panel .bulk-tool-minimize:hover {
+  background: rgba(103, 193, 245, 0.2);
+  color: #67c1f5;
+}
+
+#bulk-tool-panel .bulk-tool-minimize:focus-visible {
+  outline: 2px solid #67c1f5;
+  outline-offset: 2px;
+}
+
+#bulk-tool-panel .bulk-tool-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px 10px;
+}
+
+#bulk-tool-panel .general_btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 6px;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.08s ease,
+    box-shadow 0.15s ease;
+  background: linear-gradient(180deg, #75c8f7 0%, #2c7da6 100%);
+  color: #0e1a23;
+  border: 1px solid rgba(103, 193, 245, 0.45);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.18) inset,
+    0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+#bulk-tool-panel .general_btn svg {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+#bulk-tool-panel ._sort._sortSpan {
+  background: linear-gradient(180deg, #a4d007 0%, #5d8c08 100%) !important;
+}
+
+#bulk-tool-panel .general_btn:hover {
+  background: linear-gradient(180deg, #90d6ff 0%, #3a8cbb 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+#bulk-tool-panel .general_btn:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#bulk-tool-panel .general_btn:focus-visible {
+  outline: 2px solid #67c1f5;
+  outline-offset: 2px;
+}
+
+#bulk-tool-panel .general_btn[aria-disabled="true"] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+#bulk-tool-panel .workshopItemDescriptionTitle {
+  background: transparent;
+  border: 0;
+  color: #67c1f5;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 0 0;
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+#bulk-tool-panel .workshopItemDescriptionTitle img,
+#bulk-tool-panel .workshopItemDescriptionTitle svg {
+  background: transparent;
+}
+
+#bulk-tool-panel .childCount {
+  color: #67c1f5;
+  font-weight: 700;
+}
+
+#bulk-tool-panel .general_btn.scsv-loading {
+  background: linear-gradient(180deg, #4d6377 0%, #324759 100%);
+  color: #c7d5e0;
+}
+
+#bulk-tool-panel .general_btn.scsv-loading svg {
+  opacity: 0.5;
+}
+
+#bulk-tool-panel .general_btn.scsv-success {
+  background: linear-gradient(180deg, #75c8f7 0%, #2c7da6 100%) !important;
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+#bulk-tool-panel .general_btn.scsv-error {
+  background: linear-gradient(180deg, #d94126 0%, #912021 100%);
+  color: #fff;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);
+}
+
+.workshopItemTitle .item-size,
+.collectionItem .workshopItemTitle .item-size {
+  color: #67c1f5 !important;
+  font-size: 0.85em !important;
+  margin-left: 6px !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 4px rgba(103, 193, 245, 0.3) !important;
+}
+
+.item-size {
+  color: #67c1f5;
+  font-size: 0.85em;
+  opacity: 0.9;
+  margin-left: 4px;
+  font-weight: 500;
+  contain: layout;
+}
+
+.workshopItemTitle.ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #bulk-tool-panel,
+  #bulk-tool-panel *,
+  #bulk-tool-panel .general_btn,
+  #bulk-tool-panel .general_btn:hover {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}

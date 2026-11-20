@@ -2,19 +2,23 @@ import './styles.css'
 // @ts-ignore: unused
 import browser from 'webextension-polyfill' 
 import { SteamCollectionAnalyzer } from './SteamCollectionAnalyzer'
+import { MyWorkshopAnalyzer } from './MyWorkshopAnalyzer'
 import { SteamItemManager } from './SteamItemManager'
 
 const analyzer = new SteamCollectionAnalyzer()
+const myWorkshopAnalyzer = new MyWorkshopAnalyzer()
 const itemManager = new SteamItemManager()
 
 // Initialize when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     void analyzer.init().catch(console.error)
+    void myWorkshopAnalyzer.init().catch(console.error)
     void itemManager.init().catch(console.error)
   })
 } else {
   void analyzer.init().catch(console.error)
+  void myWorkshopAnalyzer.init().catch(console.error)
   void itemManager.init().catch(console.error)
 }
 

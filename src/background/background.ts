@@ -4,6 +4,7 @@ self.window = self;
 
 import browser from 'webextension-polyfill'
 import { CollectionService } from '../shared/CollectionService'
+import { CollectionIndexCache } from '../shared/CollectionIndexCache'
 
 const SYNC_ALARM_NAME = 'scsv-auto-sync'
 
@@ -50,6 +51,8 @@ async function performSync() {
 
     const collections = await CollectionService.getCollections()
     if (collections.length === 0) return
+
+    await CollectionIndexCache.save(user.steamId, collections)
 
     const cacheKey = `scsv_collection_cache_${user.steamId}`
     const storage = await browser.storage.local.get(cacheKey)
